@@ -1,7 +1,8 @@
 library(shiny)
 library(shinythemes)
 library(ggplot2)
-
+library(tidyverse)
+library(plotly)
 #########     UI     ###########
 
 ui <- fluidPage(h1("Kalkulator kredytowy"), theme = shinytheme("united"),
@@ -39,12 +40,11 @@ ui <- fluidPage(h1("Kalkulator kredytowy"), theme = shinytheme("united"),
                             
                             tabPanel( "Porównanie",  
                                       h3("Wysokość raty w poszczególnych miesiącach"),
-                                      plotOutput('plot')   )
+                                      plotlyOutput('plot')   )
                         )  #tabset
                     ) # main panel  
                 ) #sidebarLayot
 ) #fluid
-
 
 
 #########   SERVER   ###########
@@ -122,7 +122,7 @@ server <- function(input, output) {
     
     
     # podsumowanie i wykres
-    output$plot <- renderPlot(  {
+    output$plot <- renderPlotly(  {
         
         rowne <- dane()[[3]]
         rowne$typ <- "Równe"
@@ -134,7 +134,8 @@ server <- function(input, output) {
         ggplot(data=both)+
             geom_point(aes(x=Nr_raty, y=Rata, colour=typ))+
             ylab("Wysokość raty[PLN]") + 
-            scale_x_continuous("Miesiąc", breaks = seq(0,nrow(rowne), by=12)  )         } )
+            scale_x_continuous("Miesiąc", breaks = seq(0,nrow(rowne), by=12) +
+                                   theme_minimal())         } )
     
 }
 # Run the application 
